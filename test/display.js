@@ -2,17 +2,23 @@
 
 function drawDisplay() {
   var start = Date.now();
-  var data = getData();
+//  var data = getData();
+  var data = datasource.data;
   buildDisplay(data);
   var timetodraw = Date.now() - start;
   document.getElementById('Perf').innerHTML=":"+timetodraw;
 }
 
-window.canvasTimer = setInterval(drawDisplay, 1000);
-  var canvas = document.createElement('canvas');
-  canvas.height = 100;
-  canvas.width = 300;
-  document.getElementById('display').appendChild(canvas);
+var canvas = document.createElement('canvas');
+canvas.height = 200;
+canvas.width = 300;
+document.getElementById('display').appendChild(canvas);
+
+window.onload=function() {
+  datasource = new signalPlugin('signals');
+  datasource.init();
+  window.canvasTimer = setInterval(drawDisplay, 1000);
+}
 
 function buildDisplay(data) {
 //  var canvas = document.createElement('canvas');
