@@ -7,3 +7,6 @@
     max-height: 320px;
 }
 
+input {
+    width: 4em;
+}

@@ -16,11 +16,19 @@
 
 <body>
     <section id="wrapper">
-        <header>
-            <h1>Data</h1>
-        </header>
-        <div id="controls"></div>
-        <div id="placeholder" style="height:90vh;"></div>
+        <div id="top_controls">
+            T: <input type="number" id="trange" value="1000"> ms.
+            Y: <input id="ymin" value="0"> - <input id="ymax" value="400"> mV.
+        </div>
+        <div id="placeholder" style="height:50vh;"></div>
+        <div id="bottom_controls">
+            <button onclick="redrawPlot();" >go</button>
+            Cursors:
+            Show? <input type="checkbox" id="show_cursors" checked>
+            T1: <input id="tcursor1" value="-0.2">
+            T2: <input id="tcursor2" value="-0.1">
+            T2-T1 = <span id="tcursor_delta">-</span>
+        </div>
     </section>
 </body>
 

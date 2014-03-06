@@ -16,7 +16,7 @@ var settings = {
     },
     yaxis: {
         min: 0,
-        max: 500
+        max: 400
     },
     xaxis: {
         min: 0,
@@ -29,8 +29,51 @@ function updatePlot() {
 
     var dt = Number(datasource.deltaT);
     timestamps = _.range(0, dt * datasource.data.length, dt);
-    plotData = _.zip(timestamps, datasource.data);
+    var plotData = _.zip(timestamps, datasource.data);
     plot.setData([plotData]);
+    // Since the axes don't change, we don't need to call plot.setupGrid()
+    plot.draw();
+}
+
+function redrawPlot() {
+    trange = Number($('#trange').val()) / 1000;
+    ymin = Number($('#ymin').val());
+    ymax = Number($('#ymax').val());
+    console.log(ymax);
+    settings.yaxis.min = ymin;
+    settings.yaxis.max = ymax;
+    settings.xaxis.min = -trange;
+    settings.xaxis.max = 0;
+
+    var t,v;
+    var dt = Number(datasource.deltaT);
+    var len = Math.ceil(trange / dt);
+    var dlen = datasource.data.length;
+    if (len > dlen) {
+        len = dlen;
+    }
+
+    plotData = [];
+
+    for (var i=0; i<len; i++) {
+        t = -dt*i;
+        v =  datasource.data[dlen-1-i];
+        plotData.push([t, v]);
+    }
+
+    t1 = Number($('#tcursor1').val());
+    t2 = Number($('#tcursor2').val());
+    tcursor1 = [[t1, ymin],[t1, ymax]];
+    tcursor2 = [[t2, ymin],[t2, ymax]];
+    $('#tcursor_delta').text(t2-t1);
+    if ($('#show_cursors').is(':checked')) {
+        plotData = [
+            plotData,
+            tcursor1,
+            tcursor2
+        ];
+    }
+    plot = $.plot("#placeholder", plotData, settings);
 
     // Since the axes don't change, we don't need to call plot.setupGrid()
 
