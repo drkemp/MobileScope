@@ -5,8 +5,31 @@
     box-shadow: 0 2px 3px #292929, 0 0 37px #D6D6D6 inset, 3px  3px  4px #292929 inset;
     max-width: 320px;
     max-height: 320px;
+    float:left;
 }
 
 input {
     width: 4em;
+}
+.controls-frame {
+    padding: 5px;
+    border: 1px solid #D6D6D6;
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 2px 3px #292929, 0 0 27px #D6D6D6 inset, 3px  3px  4px #292929 inset;
+    max-width: 100px;
+    max-height: 320px;
+    float:right;
+    margin: 10px;
+}
+.controls {
+    margin: 5px
+}
+.status-bar {
+    padding: 5px;
+    border: 1px solid #D6D6D6;
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 2px 3px #292929, 0 0 27px #D6D6D6 inset, 3px  3px  4px #292929 inset;
+    max-width: 320px;
+    max-height: 40px;
+    clear:both;
 }

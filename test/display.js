@@ -13,9 +13,45 @@ canvas.height = 200;
 canvas.width = 300;
 document.getElementById('display').appendChild(canvas);
 
+function drawcontrols() {
+  ctrls = datasource.getControls();
+  for(key in ctrls) {
+    if(ctrls.hasOwnProperty(key)) {
+      if(ctrls[key].datatype=='select') makeselector(key, ctrls[key]);
+      else if(ctrls[key].datatype=='float') makeknobfloat(key, ctrls[key]);
+      else if(ctrls[key].datatype=='int') makeknobintt(key, ctrls[key]);
+    }
+  }
+}
+function makeselector(key,ctrl) {
+  var selectid='sel_'+key;
+  var picker=document.createElement('select');
+  picker.className="controls";
+  picker.id = selectid;
+  for(var opt in ctrl.choices){
+     var optel = document.createElement('option');
+     optel.text=ctrl.choices[opt];
+     picker.add(optel);
+  }
+  picker.onchange = function() {
+    var setting={};
+    var pick = document.getElementById(selectid);
+    setting[key]=pick.options[pick.selectedIndex].text;
+    datasource.setControls(setting);
+  }
+  document.getElementById('knobs.time').appendChild(picker);
+}
+function makeknobfloat(key,ctrl) {
+
+}
+function makeknobint(key,ctrl) {
+
+}
+
 window.onload=function() {
   datasource = new signalPlugin('signals');
   datasource.init();
+  drawcontrols();
   window.canvasTimer = setInterval(drawDisplay, 500);
 }
 

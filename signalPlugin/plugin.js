@@ -20,7 +20,7 @@ function signalPlugin(name) {
 
   var controls = { 
       timeslice : { datatype : 'float', label: 'Time Slice', units : 'seconds', value : '0.001', defaultValue : '0.001', readonly : false}, 
-      waveform : { datatype : 'select', label: 'Waveform', units : 'wavetype', choices: ['Sine','Triangle','Square','Unity'], value : 'Sine', defaultValue : 'Sine', readonly: false},
+      waveform : { datatype : 'select', label: 'Waveform', units : 'wavetype', choices: ['Sine','Triangle','Square','Unity','Random'], value : 'Sine', defaultValue : 'Sine', readonly: false},
       mode : { datatype : 'select', label: 'Mode', units : 'generator', choices: ['Wave','Stream'], value : 'Wave', defaultValue : 'Wave', readonly: false}
   }
 
@@ -34,22 +34,26 @@ function signalPlugin(name) {
   this.getData = function() {
     var cdata = [];
     var ctime = [];
+    var periodic = true; // for now
     var i=0;
     var j=bufferhead;
     if(bufferhead < buffertail) {
       while(j<buffertail) {
         cdata[i++]=data[j++];
-        ctime[i++]=timestamps[j++];
+        if(periodic) ctime[i++]=i;
+        else ctime[i++]=timestamps[j++];
       }
     } else if(bufferhead>buffertail){
       while(j<bufferSize) {
         cdata[i++]=data[j++];
-        ctime[i++]=timestamps[j++];
+        if(periodic) ctime[i++]=i;
+        else ctime[i++]=timestamps[j++];
       }
       j=0;
       while(j<buffertail) {
         cdata[i++]=data[j++];
-        ctime[i++]=timestamps[j++];
+        if(periodic) ctime[i++]=i;
+        else ctime[i++]=timestamps[j++];
       }
     }
     return {data:cdata,time:ctime};
