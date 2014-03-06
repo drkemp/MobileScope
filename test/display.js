@@ -3,7 +3,7 @@
 function drawDisplay() {
   var start = Date.now();
 //  var data = getData();
-  var data = datasource.data;
+  var data = datasource.getData();
   buildDisplay(data);
   var timetodraw = Date.now() - start;
   document.getElementById('Perf').innerHTML=":"+timetodraw;
@@ -17,14 +17,10 @@ document.getElementById('display').appendChild(canvas);
 window.onload=function() {
   datasource = new signalPlugin('signals');
   datasource.init();
-  window.canvasTimer = setInterval(drawDisplay, 1000);
+  window.canvasTimer = setInterval(drawDisplay, 500);
 }
 
 function buildDisplay(data) {
-//  var canvas = document.createElement('canvas');
-//  canvas.height = 100;
-//  canvas.width = 300;
-//  document.getElementById('display').appendChild(canvas);
   var ctx = canvas.getContext("2d");
     
   var maxy=-1000;
@@ -54,6 +50,8 @@ function buildDisplay(data) {
     for(var i=0; i<data.length; i++) {
       var x=300*(i+1)/maxt;
       var y=100*(data[i]+1)/maxy;
+      if(y<0) x=0;
+      if(y>299) x=299;
       ctx.lineTo(x,y);
     }
     ctx.stroke();
