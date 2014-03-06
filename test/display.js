@@ -2,8 +2,7 @@
 
 function drawDisplay() {
   var start = Date.now();
-//  var data = getData();
-  var data = datasource.getData();
+  var data = datasource.getData().data;
   buildDisplay(data);
   var timetodraw = Date.now() - start;
   document.getElementById('Perf').innerHTML=":"+timetodraw;
@@ -22,6 +21,7 @@ window.onload=function() {
 
 function buildDisplay(data) {
   var ctx = canvas.getContext("2d");
+  var r=0;g=0;b=0;
     
   var maxy=-1000;
   var maxt=data.length;
@@ -29,34 +29,22 @@ function buildDisplay(data) {
      if(data[i]>maxy) maxy=data[i];
   }
 
-  var strokes=[[0,0,0],[200,0,0],[0,200,0],[0,0,200]];
-  var r=0;g=0;b=0;indx=0;
-  function newcolor(){
-    indx++;
-    if (indx>=strokes.length) indx=0;
-    r=strokes[indx][0];
-    b=strokes[indx][1];
-    g=strokes[indx][2];
-  }
-//  function draw() {
-    ctx.clearRect(0,0,300,100); // clear canvas
-    var linewidth=2;
+  ctx.clearRect(0,0,canvas.width,canvas.height); // clear canvas
+  var linewidth=2;
 
-    ctx.save();
-    ctx.strokeStyle = 'rgb(' + r + ', ' + g + ', ' + b + ')';
-    ctx.lineWidth = linewidth;
-    ctx.beginPath();
-    ctx.moveTo(0,0);
-    for(var i=0; i<data.length; i++) {
-      var x=300*(i+1)/maxt;
-      var y=100*(data[i]+1)/maxy;
-      if(y<0) x=0;
-      if(y>299) x=299;
-      ctx.lineTo(x,y);
-    }
-    ctx.stroke();
-    ctx.restore();
-    newcolor();
-//  }
+//  ctx.save();
+  ctx.strokeStyle = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+  ctx.lineWidth = linewidth;
+  ctx.beginPath();
+  for(var i=0; i<data.length; i++) {
+      var x=canvas.width*(i+1)/maxt;
+      var y=(canvas.height-1) * (data[i]+1)/maxy;
+      if(y<0) y=0;
+      if(y>=canvas.height) y=canvas.height-1;
+      if(i==0) ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+//  ctx.restore();
 }
 

@@ -3,12 +3,9 @@
 // found in the LICENSE file.
 
 function signalPlugin(name) {
-  this.name = name;
-  this.timestamps = [];
-  this.deltaT = 0;
-  this.bufferType = 'PERIODIC';
 
   var data = [];
+  var timestamps = [];
   var unitLabel = 'units';
   var bufferSize=1024;
   var cycles =10;
@@ -27,28 +24,35 @@ function signalPlugin(name) {
       mode : { datatype : 'select', label: 'Mode', units : 'generator', choices: ['Wave','Stream'], value : 'Wave', defaultValue : 'Wave', readonly: false}
   }
 
+  this.name = name;
   this.units = unitLabel;
   this.onReset;
   this.onUpdate;
+  this.bufferType = 'PERIODIC';
+  this.deltaT = 0;
 
   this.getData = function() {
     var cdata = [];
+    var ctime = [];
     var i=0;
     var j=bufferhead;
     if(bufferhead < buffertail) {
       while(j<buffertail) {
         cdata[i++]=data[j++];
+        ctime[i++]=timestamps[j++];
       }
     } else if(bufferhead>buffertail){
       while(j<bufferSize) {
         cdata[i++]=data[j++];
+        ctime[i++]=timestamps[j++];
       }
       j=0;
       while(j<buffertail) {
         cdata[i++]=data[j++];
+        ctime[i++]=timestamps[j++];
       }
     }
-    return cdata;
+    return {data:cdata,time:ctime};
   }
 
   this.getControls = function(){
