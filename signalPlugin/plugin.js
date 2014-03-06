@@ -111,11 +111,15 @@ function signalPlugin(name) {
     if(controls.mode.value=='Stream') {
       bufferhead=0;
       buffertail=0;
-      sampleTimer=setInterval(getSample,100) 
+      if(!sampleTimer) {
+        sampleTimer=setInterval(getSample,100) 
+        console.log('Setting Timer '+sampleTimer);
+      }
     } else {
       if(sampleTimer) {
-        console.log('Clearing Timer');
+        console.log('Clearing Timer '+sampleTimer);
          clearInterval(sampleTimer);
+         sampleTimer=null;
       }
       for(var i=0;i<bufferSize;i++) {
         var phi = (i % cycleSize)/cycleSize;
