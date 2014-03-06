@@ -39,21 +39,24 @@ function signalPlugin(name) {
     var j=bufferhead;
     if(bufferhead < buffertail) {
       while(j<buffertail) {
-        cdata[i++]=data[j++];
-        if(periodic) ctime[i++]=i;
-        else ctime[i++]=timestamps[j++];
+        cdata[i]=data[j];
+        if(periodic) ctime[i]=i;
+        else ctime[i]=timestamps[j];
+        i++;j++;
       }
     } else if(bufferhead>buffertail){
       while(j<bufferSize) {
-        cdata[i++]=data[j++];
-        if(periodic) ctime[i++]=i;
-        else ctime[i++]=timestamps[j++];
+        cdata[i]=data[j];
+        if(periodic) ctime[i]=i;
+        else ctime[i]=timestamps[j];
+        i++;j++;
       }
       j=0;
       while(j<buffertail) {
-        cdata[i++]=data[j++];
-        if(periodic) ctime[i++]=i;
-        else ctime[i++]=timestamps[j++];
+        cdata[i]=data[j];
+        if(periodic) ctime[i]=i;
+        else ctime[i]=timestamps[j];
+        i++;j++;
       }
     }
     return {data:cdata,time:ctime};
@@ -76,6 +79,7 @@ function signalPlugin(name) {
           var value = valueDictionary[key];
           if(isValidData(controls[key].datatype, value)) {
             controls[key].value = valueConvert(controls[key].datatype, value);
+            console.log('Setting: '+key+'='+value);
             changed=true;
           }
         }  
@@ -109,7 +113,10 @@ function signalPlugin(name) {
       buffertail=0;
       sampleTimer=setInterval(getSample,100) 
     } else {
-      sampleTimer=null;
+      if(sampleTimer) {
+        console.log('Clearing Timer');
+         clearInterval(sampleTimer);
+      }
       for(var i=0;i<bufferSize;i++) {
         var phi = (i % cycleSize)/cycleSize;
         data[i] = makedata(phi);

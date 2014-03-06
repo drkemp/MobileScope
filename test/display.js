@@ -1,11 +1,11 @@
 
-
+var timeToDraw=0;
 function drawDisplay() {
   var start = Date.now();
   var data = datasource.getData().data;
   buildDisplay(data);
-  var timetodraw = Date.now() - start;
-  document.getElementById('Perf').innerHTML=":"+timetodraw;
+  timeToDraw = Date.now() - start;
+//  document.getElementById('Perf').innerHTML=":"+timeToDraw;
 }
 
 var canvas = document.createElement('canvas');
@@ -13,46 +13,11 @@ canvas.height = 200;
 canvas.width = 300;
 document.getElementById('display').appendChild(canvas);
 
-function drawcontrols() {
-  ctrls = datasource.getControls();
-  for(key in ctrls) {
-    if(ctrls.hasOwnProperty(key)) {
-      if(ctrls[key].datatype=='select') makeselector(key, ctrls[key]);
-      else if(ctrls[key].datatype=='float') makeknobfloat(key, ctrls[key]);
-      else if(ctrls[key].datatype=='int') makeknobintt(key, ctrls[key]);
-    }
-  }
-}
-function makeselector(key,ctrl) {
-  var selectid='sel_'+key;
-  var picker=document.createElement('select');
-  picker.className="controls";
-  picker.id = selectid;
-  for(var opt in ctrl.choices){
-     var optel = document.createElement('option');
-     optel.text=ctrl.choices[opt];
-     picker.add(optel);
-  }
-  picker.onchange = function() {
-    var setting={};
-    var pick = document.getElementById(selectid);
-    setting[key]=pick.options[pick.selectedIndex].text;
-    datasource.setControls(setting);
-  }
-  document.getElementById('knobs.time').appendChild(picker);
-}
-function makeknobfloat(key,ctrl) {
-
-}
-function makeknobint(key,ctrl) {
-
-}
-
 window.onload=function() {
   datasource = new signalPlugin('signals');
   datasource.init();
-  drawcontrols();
-  window.canvasTimer = setInterval(drawDisplay, 500);
+  drawPluginControls(datasource);
+  window.canvasTimer = setInterval(drawDisplay, 100);
 }
 
 function buildDisplay(data) {
@@ -68,7 +33,6 @@ function buildDisplay(data) {
   ctx.clearRect(0,0,canvas.width,canvas.height); // clear canvas
   var linewidth=2;
 
-//  ctx.save();
   ctx.strokeStyle = 'rgb(' + r + ', ' + g + ', ' + b + ')';
   ctx.lineWidth = linewidth;
   ctx.beginPath();
@@ -81,6 +45,8 @@ function buildDisplay(data) {
       else ctx.lineTo(x,y);
   }
   ctx.stroke();
-//  ctx.restore();
+  ctx.font="10px Arial";
+  ctx.strokeStyle = 'rgb(200,200,0)';
+  ctx.strokeText("Draw Time:"+timeToDraw,200,15);
 }
 
