@@ -6,14 +6,14 @@ function drawPluginControls(plugin) {
   ctrls = plugin.getControls();
   for(key in ctrls) {
     if(ctrls.hasOwnProperty(key)) {
-      if(ctrls[key].datatype=='select') makePluginSelect(key, ctrls[key]);
+      if(ctrls[key].datatype=='select') makePluginSelect(plugin, key, ctrls[key]);
       else if(ctrls[key].datatype=='float') makePluginAdjustFloat(key, ctrls[key]);
       else if(ctrls[key].datatype=='int') makePluginAdjustInt(key, ctrls[key]);
     }
   }
 }
 
-function makePluginSelect(key,ctrl) {
+function makePluginSelect(plugsource,key,ctrl) {
   var selectid='sel_'+key;
   var picker=document.createElement('select');
   picker.className="controls";
@@ -27,7 +27,7 @@ function makePluginSelect(key,ctrl) {
     var setting={};
     var pick = document.getElementById(selectid);
     setting[key]=pick.options[pick.selectedIndex].text;
-    datasource.setControls(setting);
+    plugsource.setControls(setting);
   }
   document.getElementById('knobs.time').appendChild(picker);
 }

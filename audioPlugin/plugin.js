@@ -2,25 +2,26 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-function signalPlugin(name) {
+function audioPlugin(name) {
 
   var data = [];
   var timestamps = [];
   var unitLabel = 'units';
   var bufferSize=1024;
   var cycles =10;
+  var maxValue = 300;
   var bufferhead=0;
   var buffertail=0;
   var pluginthis = this;
   var sampleTimer;
-  var lastdata = 150;
+  var lastdata = maxValue/2;
   var lasttick=0;
   var cycleSize = (bufferSize/cycles); // samples/ cycle
 
   var controls = { 
       timeslice : { datatype : 'float', label: 'Time Slice', units : 'seconds', value : '0.001', defaultValue : '0.001', readonly : false}, 
-      waveform : { datatype : 'select', label: 'Waveform', units : 'wavetype', choices: ['Sine','Triangle','Square','Unity','Random'], value : 'Sine', defaultValue : 'Sine', readonly: false},
-      mode : { datatype : 'select', label: 'Mode', units : 'generator', choices: ['Wave','Stream'], value : 'Wave', defaultValue : 'Wave', readonly: false}
+      gain : { datatype : 'float', label: 'Gain', units : 'gain', value : 1, defaultValue : 1 , readonly: false},
+      channel : { datatype : 'select', label: 'Channel', units : 'audio', choices: ['Left','Right'], value : 'Left', defaultValue : 'Left', readonly: false}
   }
 
   this.name = name;
@@ -30,8 +31,8 @@ function signalPlugin(name) {
   this.bufferType = 'PERIODIC';
   this.deltaT = 0;
   this.offset=0;
-  this.maxValue=300;
-  this.minValue=0;
+  this.maxValue=1;
+  this.minValue=-1;
 
   this.getData = function() {
     var cdata = [];
@@ -93,63 +94,39 @@ function signalPlugin(name) {
     }
   }
 
-  function scale( value, range) {
-    return value*( pluginthis.maxValue/range);
+
+  function record() {
+     AudioContext = window.AudioContext || window.webkitAudioContext;
+     if(!navigator.getUserMedia) navigator.getUserMedia=navigator.webkitGetUserMedia||navigator.mozGetUserMedia;
+     var context = new AudioContext();
+
+     var processStream = function(stream) {
+       console.log('Setting up audio '+channel);
+       var microphone = context.createMediaStreamSource(stream);
+       pluginthis.recorder = microphone.context.createScriptProcessor(256,2,2);
+       console.log('attach processor');
+
+       pluginthis.recorder.onaudioprocess = function(e) {
+          var buf = e.inputBuffer.getChannelData(channel);
+          for(var i=0;i< buf.length;i++) {
+            data[buffertail]=buf[i];
+            buffertail= (buffertail+1)%bufferSize;
+            bufferhead= (buffertail+1)%bufferSize;
+         }
+       }
+       microphone.connect(pluginthis.recorder);
+       // this is required or chrome wont start the stream.
+       pluginthis.recorder.connect(context.destination);
+     }
+     navigator.getUserMedia({audio: true}, processStream, function(e) { console.log('Record Failed: ',e)});
+
   }
 
-  function getSample() {
-    if(buffertail-1 >0) lastdata = data[buffertail-1];
-    var phi = (lasttick % cycleSize)/cycleSize;
-    data[buffertail++]=makedata(phi);
-    if(buffertail >= bufferSize) buffertail=0;
-    bufferhead=buffertail+1;
-    lasttick = (lasttick+1) % cycleSize;
-  }
-
-  var lastdata = pluginthis.maxValue/2;
+  var channel = 0;
   function initBuffer() {
-    lastdata=pluginthis.maxValue/2;
-    pluginthis.deltaT = controls.timeslice.value;
-    if(controls.mode.value=='Stream') {
-      bufferhead=0;
-      buffertail=0;
-      if(!sampleTimer) {
-        sampleTimer=setInterval(getSample,100) 
-        console.log('Setting Timer '+sampleTimer);
-      }
-    } else {
-      if(sampleTimer) {
-        console.log('Clearing Timer '+sampleTimer);
-         clearInterval(sampleTimer);
-         sampleTimer=null;
-      }
-      for(var i=0;i<bufferSize;i++) {
-        var phi = (i % cycleSize)/cycleSize;
-        data[i] = makedata(phi);
-      }
-      bufferhead=0;
-      buffertail=bufferSize-1;
-    }
-  }
-
-  function makedata(phi) {
-     var d=0;
-     var wavetype = controls.waveform.value;
-     if(wavetype=='Sine') d = scale( Math.sin(Math.PI*2*phi)+1, 2 );
-     else if(wavetype=='Triangle') d = scale(phi,1 );
-     else if(wavetype=='Square') d = scale( Math.round(phi),1 );
-     else if(wavetype=='Unity') d = pluginthis.maxValue/2;
-     else if(wavetype=='Random') d = makerand(lastdata);
-     lastdata=d;
-     return d;
-  }
-
-  function makerand(lastvalue) {
-    var d = (pluginthis.maxValue/2 - lastvalue)/pluginthis.maxValue; //-0.5 to 0.5 dist from middle
-    var newval = lastvalue+(Math.random()-.5)*(pluginthis.maxValue/6);
-    if(newval <0) newval=0;
-    if(newval >pluginthis.maxValue) newval=pluginthis.maxValue;
-    return newval;
+    if(controls.channel.value=='Right') channel=1;
+    else channel=0;
+    if(!pluginthis.recorder) record();
   }
 
   function setDefaults() {
