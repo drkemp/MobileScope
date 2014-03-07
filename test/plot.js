@@ -12,7 +12,6 @@ function onLoad() {
     datasource = new signalPlugin('signals');
     datasource.init();
     datasource.setControls({mode: 'Stream'});
-    //plot = $.plot("#placeholder", [[0,0], [1,0]], settings);
     redrawPlot();
     //drawcontrols();
 
@@ -88,7 +87,7 @@ function redrawPlot() {
     } else {
         lines = [ plotData ];
     }
-    plot = $.plot("#placeholder", lines, settings);
+    plot = $.plot("#graph", lines, settings);
 }
 
 function playPause() {
@@ -103,3 +102,10 @@ function playPause() {
     }
 }
 
+function showPanel(panel) {
+    var panels = ['trigger', 'cursors'];
+    for (var i = 0; i<= panels.length; i++) {
+        $('#' + panels[i] + '_panel').hide();
+    }
+    $('#' + panel + '_panel').show();
+}

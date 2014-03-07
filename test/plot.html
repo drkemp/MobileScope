@@ -16,14 +16,42 @@
 
 <body>
     <section id="wrapper">
-        <div id="top_controls">
-            <button onclick="playPause()">Play</button>
+        <div id="top_bar">
+            <img id="more_button" src="img/more.png" onclick="$('#left_panel').toggle()">
+            <button id="play_button" onclick="playPause()">Play</button>
             T: <input type="number" id="trange" value="1000"> ms.
+
+            <button id="options_button">:</button>
+        </div>
+
+        <div style="position:relative;">
+
+            <div id="left_panel">
+                <ul>
+                    <li onclick="showPanel('trigger')">Trigger</li>
+                    <li onclick="showPanel('cursors')">Cursors</li>
+                </ul>
+
+            </div>
+
+            <div id="buttons_panel">
+                <div id="trigger_panel">
+                    <button>tr</button>
+                </div>
+                <div id="cursors_panel">
+                    <button>cu</button>
+                </div>
+            </div>
+            <div id="graph"></div>
+        </div>
+
+        <div id="top_controls">
+
+
             Y: <input id="ymin" value="0"> - <input id="ymax" value="400"> mV.
         </div>
-        <div id="placeholder" style="height:50vh;"></div>
         <div id="bottom_controls">
-            <button onclick="redrawPlot()" >go</button>
+            <button onclick="redrawPlot()" >Go</button>
             Cursors:
             Show? <input type="checkbox" id="show_cursors" checked>
             T1: <input id="tcursor1" value="-0.2">

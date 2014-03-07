@@ -8,9 +8,6 @@
     float:left;
 }
 
-input {
-    width: 4em;
-}
 .controls-frame {
     padding: 5px;
     border: 1px solid #D6D6D6;
@@ -32,4 +29,55 @@ input {
     max-width: 320px;
     max-height: 40px;
     clear:both;
+}
+
+
+#top_bar {
+    background-color: lightgray;
+    height: 2em;
+}
+
+#left_panel {
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:10;
+    width: 15em;
+    background-color: gray;
+    display: none;
+}
+
+#more_button {
+    padding-top: 0.4em;
+}
+
+#options_button {
+    float:right;
+}
+
+#play_button {
+    margin-left: 3em;
+    margin-right: 2em;
+    margin-top: 0.4em;
+}
+
+#buttons_panel {
+    width: 2em;
+    float:right;
+}
+
+#graph {
+    z-index:0;
+    margin-right:2em;
+    height:50vh;
+    width:300;
+}
+
+#trigger_panel {
+    display: none;
+}
+
+
+input {
+    width: 4em;
 }
