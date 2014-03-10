@@ -1,0 +1,31 @@
+/* app css stylesheet */
+
+body {
+  padding-top: 20px;
+}
+
+#graph {
+    height: 300px;
+    margin-left: 13em;
+}
+
+#left_panel {
+    position: absolute;
+    top:0;
+    left:0;
+    z-index:10;
+    width: 12em;
+    background-color: gray;
+
+}
+
+.mytxt {
+    width: 4em;
+    margin: 0;
+}
+
+.ltbutton {
+    padding: 0;
+    margin: 0;
+
+}
