@@ -7,6 +7,7 @@ body {
 #graph {
     height: 300px;
     margin-left: 13em;
+    width: 80%;
 }
 
 #left_panel {
