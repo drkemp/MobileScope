@@ -98,28 +98,31 @@ function audioPlugin(name) {
   function record() {
      AudioContext = window.AudioContext || window.webkitAudioContext;
      if(!navigator.getUserMedia) navigator.getUserMedia=navigator.webkitGetUserMedia||navigator.mozGetUserMedia;
-     var context = new AudioContext();
+     if(!AudioContext || !navigator.getUserMedia) {
+       console.log('Audio is not supported');
+     } else {
+       var context = new AudioContext();
 
-     var processStream = function(stream) {
-       console.log('Setting up audio '+channel);
-       var microphone = context.createMediaStreamSource(stream);
-       pluginthis.recorder = microphone.context.createScriptProcessor(256,2,2);
-       console.log('attach processor');
+       var processStream = function(stream) {
+         console.log('Setting up audio '+channel);
+         var microphone = context.createMediaStreamSource(stream);
+         pluginthis.recorder = microphone.context.createScriptProcessor(256,2,2);
+         console.log('attach processor');
 
-       pluginthis.recorder.onaudioprocess = function(e) {
-          var buf = e.inputBuffer.getChannelData(channel);
-          for(var i=0;i< buf.length;i++) {
-            data[buffertail]=buf[i];
-            buffertail= (buffertail+1)%bufferSize;
-            bufferhead= (buffertail+1)%bufferSize;
+         pluginthis.recorder.onaudioprocess = function(e) {
+           var buf = e.inputBuffer.getChannelData(channel);
+           for(var i=0;i< buf.length;i++) {
+             data[buffertail]=buf[i];
+             buffertail= (buffertail+1)%bufferSize;
+             bufferhead= (buffertail+1)%bufferSize;
+           }
          }
+         microphone.connect(pluginthis.recorder);
+         // this is required or chrome wont start the stream.
+         pluginthis.recorder.connect(context.destination);
        }
-       microphone.connect(pluginthis.recorder);
-       // this is required or chrome wont start the stream.
-       pluginthis.recorder.connect(context.destination);
-     }
-     navigator.getUserMedia({audio: true}, processStream, function(e) { console.log('Record Failed: ',e)});
-
+       navigator.getUserMedia({audio: true}, processStream, function(e) { console.log('Record Failed: ',e)});
+    }
   }
 
   var channel = 0;
