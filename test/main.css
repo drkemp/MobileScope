@@ -34,7 +34,7 @@
 
 #top_bar {
     background-color: lightgray;
-    height: 2em;
+    height: 3em;
 }
 
 #left_panel {
@@ -62,13 +62,14 @@
 }
 
 #buttons_panel {
-    width: 2em;
-    float:right;
+    width: 4em;
+    position:absolute;
+    right: 0;
 }
 
 #graph {
     z-index:0;
-    margin-right:2em;
+    margin-right:3em;
     height:50vh;
     width:300;
 }
