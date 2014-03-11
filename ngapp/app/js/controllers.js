@@ -20,6 +20,17 @@ mscopeApp.controller('MScopeCtrl', function ($scope) {
     $scope.tcursor1 = -0.4;
     $scope.tcursor2 = -0.45;
 
+    var opts = $scope.signalOptions = {};
+    opts.waveform = "Sine";
+    opts.timeslice = 0.001;
+    opts.mode = "Wave";
+
+    opts = $scope.audioOptions = {};
+    opts.timeslice = 0.001;
+    opts.channel = "Left";
+    opts.gain = 1;
+
+
 
 
     var src = $scope.datasource = new signalPlugin('signals');
@@ -84,6 +95,7 @@ mscopeApp.controller('MScopeCtrl', function ($scope) {
         settings.xaxis.min = -$scope.trange;
         settings.xaxis.max = 0;
 
+        $scope.datasource.setControls($scope.signalOptions);
         var plotData = prepData($scope.trange);
 
 
