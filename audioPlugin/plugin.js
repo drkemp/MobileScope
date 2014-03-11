@@ -65,8 +65,8 @@ function audioPlugin(name) {
     return {data:cdata,time:ctime,maxValue:pluginthis.maxValue,minValue:pluginthis.minValue,offset:pluginthis.offset};
   }
 
-  this.getControls = function(){
-    return controls;
+  this.getControls = function(callback){
+    callback(controls);
   }
 
   this.init = function() {

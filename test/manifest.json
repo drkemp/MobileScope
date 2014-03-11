@@ -7,6 +7,16 @@
       "scripts": ["background.js"]
     }
   },
+  "permissions" : [
+    "audioCapture","videoCapture", "audio","serial","usb",
+    { "usbDevices" : [ 
+        { "vendorId":1027, "productId":24577},
+        { "vendorId":5824, "productId":1155},
+        { "vendorId":4292, "productId":60000},
+        { "vendorId":9025, "productId":67}
+      ]
+    }
+  ],
   "icons": { "16": "calculator-16.png", "128": "calculator-128.png" }
 }
 

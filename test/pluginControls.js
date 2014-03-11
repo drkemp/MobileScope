@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 function drawPluginControls(plugin) {
-  ctrls = plugin.getControls();
+ plugin.getControls(function(ctrls){
   for(key in ctrls) {
     if(ctrls.hasOwnProperty(key)) {
       if(ctrls[key].datatype=='select') makePluginSelect(plugin, key, ctrls[key]);
@@ -11,9 +11,11 @@ function drawPluginControls(plugin) {
       else if(ctrls[key].datatype=='int') makePluginAdjustInt(key, ctrls[key]);
     }
   }
+ });
 }
 
 function makePluginSelect(plugsource,key,ctrl) {
+  console.log('dropdown '+key,ctrl.choices.length);
   var selectid='sel_'+key;
   var picker=document.createElement('select');
   picker.className="controls";
@@ -21,6 +23,7 @@ function makePluginSelect(plugsource,key,ctrl) {
   for(var opt in ctrl.choices){
      var optel = document.createElement('option');
      optel.text=ctrl.choices[opt];
+     if(opt == ctrl.value) optel.selected=true;
      picker.add(optel);
   }
   picker.onchange = function() {

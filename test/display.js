@@ -4,7 +4,8 @@ function drawDisplay() {
   var start = Date.now();
   var data1 = datasource1.getData();
   var data2 = datasource2.getData();
-  buildDisplay(data1,data2);
+  var data3 = datasource3.getData();
+  buildDisplay(data1,data2,data3);
   timeToDraw = Date.now() - start;
 }
 
@@ -16,22 +17,27 @@ document.getElementById('display').appendChild(canvas);
 window.onload=function() {
   datasource1 = new audioPlugin('audio'); 
   datasource2 = new signalPlugin('signals');
+  datasource3 = createSerialPlugin('arduino');
   datasource1.init();
   datasource2.init();
+  datasource3.init();
   drawPluginControls(datasource1);
   drawPluginControls(datasource2);
-  window.canvasTimer = setInterval(drawDisplay, 100);
+  drawPluginControls(datasource3);
+  window.canvasTimer = setInterval(drawDisplay, 50);
 }
 
-function buildDisplay(data1, data2) {
+function buildDisplay(data1, data2, data3) {
   var ctx = canvas.getContext("2d");
 
   var color1 = 'rgb(0,0,0)';
-  var color2 = 'rgb(100,100,0)';
+  var color2 = 'rgb(0,100,100)';
+  var color3 = 'rgb(100,100,0)';
   ctx.clearRect(0,0,canvas.width,canvas.height); // clear canvas
 
   drawwave(ctx, data1, color1);
   drawwave(ctx, data2, color2);
+  drawwave(ctx, data3, color3);
 
   ctx.font="10px Arial";
   ctx.strokeStyle = 'rgb(200,200,0)';
