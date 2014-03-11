@@ -37,9 +37,9 @@
             <div id="left-panel">
                 <ul class="list-group">
                     <li class="list-group-item">
-                        <button class="btn" ng-click="trange = trange / 2">&lt;</button>
+                        <button class="btn" ng-click="changeTrange(-1)">&lt;</button>
                         <input class="mytxt" type="text" ng-model="trange">
-                        <button class="btn" ng-click="trange = trange * 2">&gt;</button>
+                        <button class="btn" ng-click="changeTrange(1)">&gt;</button>
                     </li>
                     <li class="list-group-item">
                         <button class="btn" ng-click="ymin = ymin - 1">&lt;</button>
@@ -54,13 +54,13 @@
                     <li class="list-group-item">
                         <button class="btn" ng-click="tcursor1 = tcursor1 - trange/20">&lt;</button>
                         <input class="mytxt" type="text" ng-model="tcursor1">
-                        <button class="btn" ng-click="tcursor1 = tcursor1 - trange/20">&gt;</button>
+                        <button class="btn" ng-click="tcursor1 = tcursor1 + trange/20">&gt;</button>
                     </li>
                     <li class="list-group-item">
                         <button class="btn" ng-click="playPause()">
                             <i class="glyphicon glyphicon-play"></i>
                         </button>
-                        <button class="btn" ng-click="redrawPlot()">
+                        <button class="btn" ng-click="nextFrame()">
                             <i class="glyphicon glyphicon-repeat"></i>
                         </button>
                     </li>
