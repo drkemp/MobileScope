@@ -30,35 +30,46 @@
     <div class="container-fluid">
         <div class="row-fluid">
 
-            Place for the top bar.
+            Place for the top bar. {{voffset}}
         </div>
 
         <div class="row-fluid" style="position: relative">
             <div id="left-panel">
                 <ul class="list-group">
                     <li class="list-group-item">
-                        <button class="btn" ng-click="changeTrange(-1)">&lt;</button>
-                        <input class="mytxt" type="text" ng-model="trange">
-                        <button class="btn" ng-click="changeTrange(1)">&gt;</button>
+                        <button class="btn wheelbutton" ng-click="changeLogVal('trange', -1)">&lt;</button>
+                        <span class="midletter">T</span>
+                        <button class="btn wheelbutton" ng-click="changeLogVal('trange', 1)">&gt;</button>
                     </li>
+
                     <li class="list-group-item">
-                        <button class="btn" ng-click="ymin = ymin - 1">&lt;</button>
-                        <input class="mytxt" type="text" ng-model="ymin">
-                        <button class="btn" ng-click="ymin = ymin + 1">&gt;</button>
+                        <button class="btn wheelbutton" ng-click="changeLogVal('vrange', 1)">&lt;</button>
+                        <span class="midletter">G</span>
+                        <button class="btn wheelbutton" ng-click="changeLogVal('vrange', -1)">&gt;</button>
                     </li>
+
                     <li class="list-group-item">
-                        <button class="btn" ng-click="ymax = ymax-1">&lt;</button>
-                        <input class="mytxt" type="text" ng-model="ymax">
-                        <button class="btn" ng-click="ymax = ymax + 1">&gt;</button>
+                        <button class="btn wheelbutton" ng-click="changRelVal('voffset', vrange / 20, -1)">&lt;</button>
+                        <span class="midletter">O</span>
+                        <button class="btn wheelbutton" ng-click="changRelVal('voffset', vrange / 20, 1)">&gt;</button>
                     </li>
+
                     <li class="list-group-item">
-                        <button class="btn" ng-click="tcursor1 = tcursor1 - trange/20">&lt;</button>
-                        <input class="mytxt" type="text" ng-model="tcursor1">
-                        <button class="btn" ng-click="tcursor1 = tcursor1 + trange/20">&gt;</button>
+                        <button class="btn wheelbutton" ng-click="changRelVal('tcursor1', trange / 20, -1)">&lt;</button>
+                        <span class="midletter">C</span>
+                        <button class="btn wheelbutton" ng-click="changRelVal('tcursor1', trange / 20, 1)">&gt;</button>
                     </li>
+
+                    <li class="list-group-item">
+                        <button class="btn wheelbutton" ng-click="changRelVal('tcursor2', trange / 20, -1)">&lt;</button>
+                        <span class="midletter">C</span>
+                        <button class="btn wheelbutton" ng-click="changRelVal('tcursor2', trange / 20, 1)">&gt;</button>
+                    </li>
+
+
                     <li class="list-group-item">
                         <button class="btn" ng-click="playPause()">
-                            <i class="glyphicon glyphicon-play"></i>
+                            <i class="glyphicon glyphicon-{{isPlaying?'pause':'play'}}"></i>
                         </button>
                         <button class="btn" ng-click="nextFrame()">
                             <i class="glyphicon glyphicon-repeat"></i>

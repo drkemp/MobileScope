@@ -15,10 +15,10 @@ mscopeApp.controller('MScopeCtrl', function ($scope) {
     $scope.buffer = {};
 
     $scope.isPlaying = false;
-    $scope.ymin =0;
-    $scope.ymax = 300;
     $scope.tscale = 1000; // 1000 means ms 1e6 would mean us.
     $scope.trange = 1000;
+    $scope.vrange = 500;
+    $scope.voffset = 0;
     $scope.show_cursors = true;
     $scope.tcursor1 = -0.4;
     $scope.tcursor2 = -0.45;
@@ -40,7 +40,11 @@ mscopeApp.controller('MScopeCtrl', function ($scope) {
 
 
     $scope.$watch('trange', redrawPlot);
+    $scope.$watch('vrange', redrawPlot);
+    $scope.$watch('voffset', redrawPlot);
+
     $scope.$watch('tcursor1', updatePlot);
+    $scope.$watch('tcursor2', updatePlot);
 
 
     var src = $scope.datasource = new signalPlugin('signals');
@@ -114,8 +118,11 @@ mscopeApp.controller('MScopeCtrl', function ($scope) {
         var lines;
         var plotData = prepData();
 
-        var tcursor1 = [[$scope.tcursor1, $scope.ymin], [$scope.tcursor1, $scope.ymax]];
-        var tcursor2 = [[$scope.tcursor2, $scope.ymin], [$scope.tcursor2, $scope.ymax]];
+        var ymin = $scope.voffset;
+        var ymax = $scope.voffset + $scope.vrange;
+
+        var tcursor1 = [[$scope.tcursor1, ymin], [$scope.tcursor1, ymax]];
+        var tcursor2 = [[$scope.tcursor2, ymin], [$scope.tcursor2, ymax]];
 
         if ($scope.show_cursors) {
             lines = [
@@ -134,9 +141,12 @@ mscopeApp.controller('MScopeCtrl', function ($scope) {
     function redrawPlot() {
         var lines;
 
+        var ymin = $scope.voffset;
+        var ymax = $scope.voffset + $scope.vrange;
+
         var settings = $scope.settings;
-        settings.yaxis.min = $scope.ymin;
-        settings.yaxis.max = $scope.ymax;
+        settings.yaxis.min = ymin;
+        settings.yaxis.max = ymax;
         settings.xaxis.min = -$scope.trange;
         settings.xaxis.max = 0;
 
@@ -161,18 +171,32 @@ mscopeApp.controller('MScopeCtrl', function ($scope) {
 
     $scope.changeTrange = changeTrange;
     function changeTrange(direction) {
-        var trange = $scope.trange;
-        if (direction > 0) trange *= 2;
-        else trange /= 2;
-
-        var zeros = Math.floor(Math.log(trange) / Math.LN10 * 1.001);
-        var scale = Math.pow(10, zeros);
-        var msd = trange / scale;
-        if (msd < 1.5 ) msd = 1;
-        else if (msd <=3) msd =2;
-        else msd = 5;
-        $scope.trange = msd*scale;
+        $scope.trange = changeLogVal($scope.trange, direction);
     }
 
+    // Move to next or prev value in the following series
+    // ... 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50 .....
+    // There must be a simpler way.
+    $scope.changeLogVal = changeLogVal;
+    function changeLogVal(valueName, direction) {
+        var value = $scope[valueName];
+        if (direction > 0) value *= 2;
+        else value /= 2;
 
+        var zeros = Math.floor(Math.log(value) / Math.LN10 * 1.001);
+        var scale = Math.pow(10, zeros);
+        var msd = value / scale;
+        if (msd < 1.5 ) msd = 1;
+        else if (msd <=3) msd = 2;
+        else if (msd <= 7.5) msd = 5;
+        else msd = 10;
+        $scope[valueName] =  msd * scale;
+    }
+
+    $scope.changRelVal = changRelVal;
+    function changRelVal(valueName, step, direction) {
+        var value = $scope[valueName];
+        var newValue = step * (Math.round(value/step) + direction);
+        $scope[valueName] = newValue;
+    }
 });

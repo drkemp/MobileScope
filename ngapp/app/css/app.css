@@ -37,3 +37,15 @@ body {
     display: inline-block;
 }
 
+.wheelbutton {
+    height: 3em;
+    width: 3em;
+}
+
+.midletter {
+    display: inline-block;
+    width: 1em;
+    text-align: center;
+}
+
+
