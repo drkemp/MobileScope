@@ -3,11 +3,16 @@ var serialPlugin = new  basePlugin(name);
 
 serialPlugin.maxValue=1024;
 serialPlugin.minValue=0;
+serialPlugin.callbacksAdded=false;
 
-if(typeof(serial)!==undefined) {
+if(typeof(cordova)!=="undefined") {
   serialPlugin.serial=window.serial;
+  chrome.serial=null;
 } else {
+  // using chrome.serial
   serialPlugin.serial=null;
+  chrome.serial.onReceive.addListener(serialPlugin.onReceiveCallback);
+  chrome.serial.onReceiveError.addListener(serialPlugin.onErrorCallback);
 }
 
 serialPlugin.initBuffer = function() {
@@ -25,7 +30,7 @@ serialPlugin.initBuffer = function() {
 serialPlugin.open = function(callback) {
   if(!!serialPlugin.serial) {
     console.log('Open Mobile started');
-    var opts = {baudRate:115200, dataBits:8, stopBits:1, parity:0};
+    var opts = {baudRate:9600, dataBits:8, stopBits:1, parity:0};
     serial.requestPermission(function(){
       serial.open(opts, function success() {
         self.readTimer = setInterval(serialPlugin.onMobileRead,100);
@@ -39,8 +44,11 @@ serialPlugin.open = function(callback) {
      chrome.serial.connect(serialPlugin.controls.port.value, {bitrate: bitrate}, function(connectionInfo){
       console.log('Open Chrome ok',connectionInfo);
       serialPlugin.connectionId = connectionInfo.connectionId;
-      chrome.serial.onReceive.addListener(serialPlugin.onReceiveCallback);
-      chrome.serial.onReceiveError.addListener(serialPlugin.onErrorCallback);
+      if(!serialPlugin.callbacksAdded) {
+        chrome.serial.onReceive.addListener(serialPlugin.onReceiveCallback);
+        chrome.serial.onReceiveError.addListener(serialPlugin.onErrorCallback);
+        serialPlugin.callbacksAdded=true;
+      }
       console.log('Open Chrome complete');
       callback(true);
      });
@@ -151,7 +159,7 @@ serialPlugin.getControls = function(callback){
 }
 
 serialPlugin.controls.port =  { datatype : 'select', label: 'Port', units : 'port', choices : [],  value : '', defaultValue : '' , readonly: false};
-serialPlugin.controls.bitrate =  { datatype : 'select', label: 'Bitrate', units : 'b/s', choices : ['2400', '4800', '9600', '14400', '19200', '38400', '57600', '115200'],  value : '115200', defaultValue : '115200' , readonly: false};
+serialPlugin.controls.bitrate =  { datatype : 'select', label: 'Bitrate', units : 'b/s', choices : ['2400', '4800', '9600', '14400', '19200', '38400', '57600', '115200'],  value : '9600', defaultValue : '9600' , readonly: false};
 
 return serialPlugin;
 }
